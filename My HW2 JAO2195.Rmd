@@ -1,7 +1,7 @@
 ---
-title: "HW 2 (jao2195)"
+title: "Data Science - Homework 2"
 author: "Jennifer Osei (jao2195)"
-date: "2022-10-04"
+date: "October 4, 2022"
 output: github_document
 ---
 
@@ -9,7 +9,7 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Problem 2
+#Problem 2
 This problem uses the Mr. Trash Wheel dataset, available as an Excel file on the course website.
 
 Read and clean the Mr. Trash Wheel sheet:
@@ -22,12 +22,11 @@ Use a similar process to import, clean, and organize the data for Professor Tras
 
 Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of sports balls collected by Mr. Trash Wheel in 2020?
 
-```{r}
+```{r, message = F}
 
 library(tidyverse)
 library(readxl)
 library(readr)
-
 ```
 
 ```{r}
@@ -35,30 +34,83 @@ library(readr)
 trash_wheel = read_excel("data/trashwheel.xlsx", sheet = "Mr. Trash Wheel")
 View(trash_wheel) 
 
+trash_wheels_2 = trash_wheel %>% 
+ mutate(sports_balls = as.integer(round(pull(sports_balls))))
+View(trash_wheels_2)
+
 ```
 
 
-Problem 3
+#Problem 3
 This problem uses the FiveThirtyEight data; these data were gathered to create the interactive graphic on this page. In particular, we’ll use the data in pols-month.csv, unemployment.csv, and snp.csv. Our goal is to merge these into a single data frame using year and month as keys across datasets.
-
-```{r}
-
-pols_month <- read_csv("data/pols-month.csv")
-View(pols_month)
-
-
-snp <- read_csv("data/snp.csv")
-View(snp)
-
-unemployment <- read_csv("data/unemployment.csv")
-View(unemployment)
-
-```
-
 
 First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
 
+#rm(list = ls())
+
+```{r}
+
+pols_month2 = read_csv("data/pols-month.csv") %>% 
+ janitor::clean_names() %>% 
+  separate(mon,into = c("month", "day", "year")) %>% 
+  mutate(year = as.integer(year), month = as.integer(month), day = as.integer(day)) %>% 
+  mutate(month = month.name[month]) %>% 
+  mutate(prez_gop = replace(prez_gop, prez_gop==2, 1 )) %>% 
+  mutate(president = ifelse(prez_gop == '1', 'gop', 'dem')) 
+  
+
+View(pols_month2)
+
+
+
+
+  
+  View(pols_month2)
+           
+```
+
+
 Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
+
+```{r}
+dim(unemployment)
+nrow(unemployment)
+ncol(unemployment)
+View(unemployment2)
+
+unemployment3 %>%  
+  pivot_longer(
+    jan:dec, 
+    names_to = "month", 
+    values_to = "unemployment rate")
+
+
+
+```
+
+
+
+```{r}
+unemployment3 = 
+  read_csv("data/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+    pivot_longer(
+    jan:dec, 
+    names_to = "month", 
+    values_to = "unemployment rate")
+
+View(unemployment3)
+  
+```
+
+
+```{r}
+
+  
+  test = separate(pols_month$mon, c("year", "month", "day"), sep="-")
+
+View(pols_month)
+```
 
 Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
 
@@ -67,24 +119,4 @@ Join the datasets by merging snp into pols, and merging unemployment into the re
 Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
 Note: we could have used a date variable as a key instead of creating year and month keys; doing so would help with some kinds of plotting, and be a more accurate representation of the data. Date formats are tricky, though. For more information check out the lubridate package in the tidyverse
-
-```{r}
-
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-```{r}
-month = replace(month)
-```
 
