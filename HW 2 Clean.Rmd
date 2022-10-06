@@ -1,0 +1,35 @@
+---
+title: "HW 2 Clean"
+author: "Jennifer Osei (jao2195)"
+date: "2022-10-05"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+rm(list = ls())
+
+library(tidyverse)
+library(readxl)
+library(readr)
+```
+
+```{r}
+pols_month2 = read_csv("data/pols-month.csv") %>% 
+ 
+  
+  janitor::clean_names() %>% 
+separate(mon,into = c("month", "day", "year")) 
+
+View(pols_month2)
+# %>% 
+#   mutate(year = as.integer(year), month = as.integer(month), day = as.integer(day)) %>% 
+#   mutate(month = month.name[month]) %>% 
+#   mutate(prez_gop = replace(prez_gop, prez_gop==2, 1 )) %>% 
+#   mutate(president = ifelse(prez_gop == '1', 'gop', 'dem')) 
+# 
+# View(pols_month2)
+
+```
+
